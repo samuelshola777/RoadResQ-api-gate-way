@@ -1,0 +1,27 @@
+server:
+  port: ${PORT:8070}
+
+spring:
+  config:
+    import: "file:./env.properties"
+
+  application:
+    name: road-resq-gateway
+
+  cloud:
+    gateway:
+      server:
+        webflux:
+          httpclient:
+            connect-timeout: 3000
+            response-timeout: 15s
+
+app:
+  auth-service-url: ${AUTH_SERVICE_URL:http://localhost:8071}
+  jwt-secret: ${JWT_SECRET}
+  internal-key: ${INTERNAL_SERVICE_KEY}
+  api-key: ${GATEWAY_API_KEY}
+  issuer: ${JWT_ISSUER:road-resq-auth}
+  audience: ${JWT_AUDIENCE:road-resq}
+  allowed-origins: ${ALLOWED_ORIGINS:http://localhost:3000}
+  rate-limit: ${PUBLIC_RATE_LIMIT:30}
