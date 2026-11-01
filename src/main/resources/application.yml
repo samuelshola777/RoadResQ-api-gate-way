@@ -8,6 +8,17 @@ spring:
   application:
     name: road-resq-gateway
 
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+      username: ${REDIS_USERNAME}
+      password: ${REDIS_PASSWORD}
+      ssl:
+        enabled: true
+      connect-timeout: 5s
+      timeout: 5s
+
   cloud:
     gateway:
       server:
@@ -16,8 +27,27 @@ spring:
             connect-timeout: 3000
             response-timeout: 15s
 
+          routes:
+            - id: auth-service
+              uri: ${app.auth-service-url}
+              predicates:
+                - Path=/auth/**
+              filters:
+                - StripPrefix=1
+                - PrefixPath=/api/v1
+
+            - id: road-resq-service
+              uri: ${app.road-resq-service-url}
+              predicates:
+                - Path=/road-resq/**
+                - Header=X-Service-Type, ROAD_RESQ
+              filters:
+                - StripPrefix=1
+                - PrefixPath=/api/v1
+
 app:
   auth-service-url: ${AUTH_SERVICE_URL:http://localhost:8071}
+  road-resq-service-url: ${ROAD_RESQ_SERVICE_URL:http://localhost:8072}
   jwt-secret: ${JWT_SECRET}
   internal-key: ${INTERNAL_SERVICE_KEY}
   api-key: ${GATEWAY_API_KEY}
@@ -25,3 +55,17 @@ app:
   audience: ${JWT_AUDIENCE:road-resq}
   allowed-origins: ${ALLOWED_ORIGINS:http://localhost:3000}
   rate-limit: ${PUBLIC_RATE_LIMIT:30}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+
+  endpoint:
+    health:
+      show-components: always
+
+  health:
+    redis:
+      enabled: true
