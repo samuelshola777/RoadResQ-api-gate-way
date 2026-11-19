@@ -3,7 +3,7 @@ server:
 
 spring:
   config:
-    import: "file:./env.properties"
+    import: "optional:file:./env.properties"
 
   application:
     name: road-resq-gateway
