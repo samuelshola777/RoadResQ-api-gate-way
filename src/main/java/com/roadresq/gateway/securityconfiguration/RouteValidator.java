@@ -50,6 +50,14 @@ public class RouteValidator {
                     SYSTEM_OPEN_ENDPOINTS.stream()
             ).toList();
 
+    private static final Pattern PAYMENT_WEBHOOK =
+            Pattern.compile("^/(?:auth|road-resq)/utilities/public/payment-webhooks/(?:paystack|flutterwave)$");
+
+    public boolean isPaymentWebhook(ServerHttpRequest request) {
+        return HttpMethod.POST.equals(request.getMethod())
+                && PAYMENT_WEBHOOK.matcher(request.getURI().getRawPath()).matches();
+    }
+
     public final Predicate<ServerHttpRequest> isPublic = request -> {
         String path = request.getPath().value();
         HttpMethod method = request.getMethod();

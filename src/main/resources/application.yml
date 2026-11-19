@@ -36,6 +36,23 @@ spring:
                 - StripPrefix=1
                 - PrefixPath=/api/v1
 
+            - id: road-resq-payments
+              order: -1
+              uri: ${app.auth-service-url}
+              predicates:
+                - Path=/road-resq/rescue-requests/private/{requestId}/payment,/road-resq/rescue-requests/private/{requestId}/payment/verify,/road-resq/utilities/public/payment-webhooks/paystack,/road-resq/utilities/public/payment-webhooks/flutterwave
+              filters:
+                - StripPrefix=1
+                - PrefixPath=/api/v1
+
+            - id: notification-service
+              uri: ${NOTIFICATION_SERVICE_URL:http://localhost:8073}
+              predicates:
+                - Path=/notifications/**
+                - Header=X-Service-Type, ROAD_RESQ
+              filters:
+                - PrefixPath=/api/v1
+
             - id: road-resq-service
               uri: ${app.road-resq-service-url}
               predicates:

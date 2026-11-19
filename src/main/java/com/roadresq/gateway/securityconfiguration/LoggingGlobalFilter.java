@@ -55,6 +55,11 @@ public class LoggingGlobalFilter implements GlobalFilter, Ordered {
                 path
         );
 
+        // Provider callbacks carry a provider signature instead of mobile app credentials.
+        if (routerValidator.isPaymentWebhook(request)) {
+            return chain.filter(exchange);
+        }
+
         String apiKey = getSingleHeader(request, "X-Api-Key");
 
         if (!isApiKeyValid(apiKey)) {
